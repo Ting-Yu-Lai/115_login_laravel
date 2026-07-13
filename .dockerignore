@@ -1,0 +1,35 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+
+vendor/
+node_modules/
+
+# 這兩個是本機用「含 dev 依賴」的 composer install 產生的套件探索快取，
+# 裡面會記錄 laravel/pail 這種 require-dev 套件的 ServiceProvider。
+# container 內是 --no-dev 安裝，沒有這些套件，帶著本機這份快取進去會導致
+# 「Class ...PailServiceProvider not found」。讓 Laravel 在 container 內
+# 用實際安裝的套件自動重新產生這兩個檔案。
+bootstrap/cache/*.php
+
+storage/app/*
+!storage/app/public
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+
+tests/
+.phpunit.cache/
+phpunit.xml
+
+*.md
+mentor-notes/
+
+.idea/
+.vscode/
+
+docker-compose*
+Dockerfile*
