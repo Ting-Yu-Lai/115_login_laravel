@@ -4,8 +4,14 @@
 # Stage 1: vendor — 只用 composer.json/composer.lock 安裝 PHP 依賴
 #   對應技巧 3（docker-image-slimming）：依賴清單先進去，程式碼還沒進來，
 #   之後改 app 程式碼不會讓這層 cache 失效。
+#   底層用 php:8.2-cli-alpine（跟 runtime stage 同一個 PHP 版本），
+#   只從官方 composer image 借用 composer 執行檔本身——
+#   composer:2 image 自己聲明「不要依賴我們容器裡的 PHP 版本」
+#   (https://hub.docker.com/_/composer)，它的 PHP 版本會浮動，
+#   跟專案實際要跑的 8.2 對不上時，套件相容性檢查就會炸掉。
 # ============================================================
-FROM composer:2 AS vendor
+FROM php:8.2-cli-alpine AS vendor
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install \
