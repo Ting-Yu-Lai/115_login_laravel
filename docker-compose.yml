@@ -1,16 +1,27 @@
+# 開發用 compose：app 走 Dockerfile 的 development target（完整工具鏈 + Xdebug），
+# 不是原本減脂過的 production target。
+# container_name 都加上 kayn_login 前綴，跟本機另一個專案（102_oa_laravel，
+# 佔用 app/db/webserver/mongodb 這些裸名稱、3308/8080/8088/9443/27017 這些 port）
+# 分開，避免撞名、撞 port。
 services:
   app:
     build:
       context: .
       dockerfile: Dockerfile
+      target: development
+    container_name: kayn_login_app
     volumes:
-      - ./storage:/var/www/html/storage
+      - .:/var/www/html
+      - /var/www/html/vendor # 保留 container 自己裝的 vendor，不被上面整包掛載蓋掉
     env_file: .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Linux 上 Docker Desktop 沒有這個別名，手動補上給 Xdebug 用
     depends_on:
       - mysql
 
   nginx:
     image: nginx:alpine
+    container_name: kayn_login_nginx
     ports:
       - "8000:80"
     volumes:
@@ -21,6 +32,7 @@ services:
 
   mysql:
     image: mysql:8.4
+    container_name: kayn_login_mysql
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_USER: ${DB_USERNAME}
