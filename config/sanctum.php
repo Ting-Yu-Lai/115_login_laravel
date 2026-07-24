@@ -6,9 +6,6 @@ use Laravel\Sanctum\Http\Middleware\AuthenticateSession;
 use Laravel\Sanctum\Sanctum;
 
 return [
-
-    'expiration' => 525600,
-
     /*
     |--------------------------------------------------------------------------
     | Stateful Domains
@@ -52,7 +49,8 @@ return [
     |
     */
 
-    'expiration' => null,
+    'expiration' => env('SANCTUM_AT_EXPIRTION', 60),
+    'rf_expiration' => env('SANCTUM_RF_EXPITAION', 20160),
 
     /*
     |--------------------------------------------------------------------------
